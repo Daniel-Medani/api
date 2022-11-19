@@ -5,7 +5,12 @@ const Cliente = mongoose.model("Cliente", {
   cpf: String,
   endereco: String,
   telefone: String,
-  pet: [{ nome: String, sexo: String, idade: Date, raca: String }],
+  pet: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Pet",
+    },
+  ],
 });
 
 module.exports = Cliente;
