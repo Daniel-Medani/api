@@ -48,7 +48,7 @@ router.get("/:id", async (req, res) => {
   const id = req.params.id;
 
   try {
-    const cliente = await Cliente.findOne({ _id: id });
+    const cliente = await Cliente.findOne({ _id: id }).populate("pets");
 
     if (!cliente) {
       res.status(422).json({ message: "O cliente não foi encontrado!" });
