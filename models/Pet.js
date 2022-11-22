@@ -10,7 +10,7 @@ const PetSchema = mongoose.Schema({
   idade: {
     type: Date,
   },
-  telefone: {
+  raca: {
     type: String,
   },
   dono: {

@@ -33,7 +33,7 @@ router.post("/", async (req, res) => {
 
 router.get("/", async (req, res) => {
   try {
-    const pets = await Pet.find();
+    const pets = await Pet.find().populate("dono");
 
     res.status(200).json(pets);
   } catch (error) {
