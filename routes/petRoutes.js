@@ -1,6 +1,6 @@
 const router = require("express").Router();
-const db = require("../models");
 const Pet = require("../models/Pet");
+const Cliente = require("../models/Cliente");
 
 // Create - criação de dados
 router.post("/", async (req, res) => {
@@ -13,8 +13,15 @@ router.post("/", async (req, res) => {
 
   try {
     // criando dados
-    const pet = await Pet.create({ nome, sexo, idade, raca });
-    await db.Cliente.findByIdAndUpdate(dono, {
+    const pet = await Pet.create({
+      nome,
+      sexo,
+      idade,
+      raca,
+      dono: await Cliente.findOne({ _id: dono }),
+    });
+
+    await Cliente.findByIdAndUpdate(dono, {
       $push: {
         pets: {
           nome,
