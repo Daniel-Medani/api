@@ -1,12 +1,13 @@
 const router = require("express").Router();
 
 const Cliente = require("../models/Cliente");
+const Pet = require("../models/Pet");
 
 // Create - criação de dados
 router.post("/", async (req, res) => {
   // req.body
 
-  const { nome, cpf, endereco, telefone, pet } = req.body;
+  const { nome, cpf, endereco, telefone } = req.body;
 
   if (!nome) {
     res.status(422).json({ error: "O nome é obrigatório" });
@@ -18,7 +19,6 @@ router.post("/", async (req, res) => {
     cpf,
     endereco,
     telefone,
-    pet,
   };
 
   try {
@@ -108,6 +108,7 @@ router.delete("/:id", async (req, res) => {
 
   try {
     await Cliente.deleteOne({ _id: id });
+    await Pet.deleteMany({ dono: id });
 
     res.status(200).json({ message: "Cliente removido com sucesso!" });
   } catch (error) {

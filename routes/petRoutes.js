@@ -3,8 +3,10 @@ const Pet = require("../models/Pet");
 const Cliente = require("../models/Cliente");
 
 // Create - criação de dados
-router.post("/", async (req, res) => {
-  const { nome, sexo, idade, raca, dono } = req.body;
+router.post("/:id/pets", async (req, res) => {
+  const { nome, sexo, idade, raca } = req.body;
+
+  const clienteId = req.params.id;
 
   if (!nome) {
     res.status(422).json({ error: "O nome é obrigatório" });
@@ -18,10 +20,10 @@ router.post("/", async (req, res) => {
       sexo,
       idade,
       raca,
-      dono: await Cliente.findOne({ _id: dono }),
+      dono: await Cliente.findOne({ _id: clienteId }),
     });
 
-    await Cliente.findByIdAndUpdate(dono, {
+    await Cliente.findByIdAndUpdate(clienteId, {
       $push: {
         pets: {
           nome,
@@ -38,7 +40,8 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.get("/", async (req, res) => {
+// get all
+router.get("/:id/pets", async (req, res) => {
   try {
     const pets = await Pet.find().populate({ path: "dono", select: "nome" });
 
@@ -48,7 +51,8 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/:id", async (req, res) => {
+// get one
+router.get("/:id/pets/:petId", async (req, res) => {
   // extrair o dado da requisição
   try {
     const pet = await Pet.findOne({ _id: req.params.id }).populate({
@@ -68,7 +72,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // Update - atualização de dados (PUT, PATCH)
-router.patch("/:id", async (req, res) => {
+router.patch("/:id/pets/:petId", async (req, res) => {
   const { nome, sexo, idade, raca } = req.body;
 
   const pet = {
@@ -93,8 +97,8 @@ router.patch("/:id", async (req, res) => {
 });
 
 // Delete - deletar dados
-router.delete("/:id", async (req, res) => {
-  const pet = await Pet.findOne({ _id: req.params.id });
+router.delete("/:id/pets/:petId", async (req, res) => {
+  const pet = await Pet.findOne({ _id: req.params.petId });
 
   if (!pet) {
     res.status(422).json({ message: "O pet não foi encontrado!" });
@@ -102,7 +106,11 @@ router.delete("/:id", async (req, res) => {
   }
 
   try {
-    await Pet.deleteOne({ _id: req.params.id });
+    await Pet.deleteOne({ _id: req.params.petId });
+    await Cliente.findOneAndUpdate(
+      { _id: req.params.id },
+      { $pull: { pets: pet._id } }
+    );
 
     res.status(200).json({ message: "Pet removido com sucesso!" });
   } catch (error) {

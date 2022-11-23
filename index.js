@@ -21,13 +21,12 @@ app.use(
 app.use(express.json());
 
 // rotas da API
-// const personRoutes = require("./routes/personRoutes");
+
 const clienteRoutes = require("./routes/clienteRoutes");
 const petRoutes = require("./routes/petRoutes");
 
-// app.use("/person", personRoutes);
 app.use("/clientes", clienteRoutes);
-app.use("/pets", petRoutes);
+app.use("/clientes", petRoutes);
 
 // rota inicial / endpoint
 app.get("/", (req, res) => {
