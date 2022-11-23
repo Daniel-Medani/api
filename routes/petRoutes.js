@@ -40,7 +40,7 @@ router.post("/", async (req, res) => {
 
 router.get("/", async (req, res) => {
   try {
-    const pets = await Pet.find().populate("dono");
+    const pets = await Pet.find().populate({ path: "dono", select: "nome" });
 
     res.status(200).json(pets);
   } catch (error) {
@@ -51,7 +51,10 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   // extrair o dado da requisição
   try {
-    const pet = await Pet.findOne({ _id: req.params.id });
+    const pet = await Pet.findOne({ _id: req.params.id }).populate({
+      path: "dono",
+      select: "nome",
+    });
 
     if (!pet) {
       res.status(422).json({ message: "O pet não foi encontrado!" });
