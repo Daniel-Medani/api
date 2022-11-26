@@ -40,10 +40,13 @@ router.post("/:id/pets", async (req, res) => {
   }
 });
 
-// get all
+// get by owner
 router.get("/:id/pets", async (req, res) => {
   try {
-    const pets = await Pet.find().populate({ path: "dono", select: "nome" });
+    const pets = await Pet.find({ dono: req.params.id }).populate({
+      path: "dono",
+      select: "nome",
+    });
 
     res.status(200).json(pets);
   } catch (error) {
@@ -72,7 +75,7 @@ router.get("/:id/pets/:petId", async (req, res) => {
 });
 
 // Update - atualização de dados (PUT, PATCH)
-router.patch("/:id/pets/:petId", async (req, res) => {
+router.put("/:id/pets/:petId", async (req, res) => {
   const { nome, sexo, idade, raca } = req.body;
 
   const pet = {
