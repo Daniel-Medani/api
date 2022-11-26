@@ -26,7 +26,7 @@ const clienteRoutes = require("./routes/clienteRoutes");
 const petRoutes = require("./routes/petRoutes");
 
 app.use("/clientes", clienteRoutes);
-app.use("/clientes", petRoutes);
+app.use("/pets", petRoutes);
 
 // rota inicial / endpoint
 app.get("/", (req, res) => {

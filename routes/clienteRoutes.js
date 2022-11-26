@@ -3,16 +3,39 @@ const router = require("express").Router();
 const Cliente = require("../models/Cliente");
 const Pet = require("../models/Pet");
 
-// Create - criação de dados
-router.post("/", async (req, res) => {
-  // req.body
+// post pet
+router.post("/:id/pets", async (req, res) => {
+  const { nome, sexo, idade, raca } = req.body;
 
-  const { nome, cpf, endereco, telefone } = req.body;
+  try {
+    const pet = await Pet.create({
+      nome,
+      sexo,
+      idade,
+      raca,
+      dono: await Cliente.findOne({ _id: req.params.id }),
+    });
 
-  if (!nome) {
-    res.status(422).json({ error: "O nome é obrigatório" });
-    return;
+    await Cliente.findByIdAndUpdate(req.params.id, {
+      $push: {
+        pets: {
+          nome,
+          sexo,
+          idade,
+          raca,
+          _id: pet._id,
+        },
+      },
+    });
+    res.status(201).json({ message: "Pet inserido no sistema com sucesso!" });
+  } catch (error) {
+    res.status(500).json({ error: error });
   }
+});
+
+// post cliente
+router.post("/", async (req, res) => {
+  const { nome, cpf, endereco, telefone } = req.body;
 
   const cliente = {
     nome,
@@ -22,7 +45,6 @@ router.post("/", async (req, res) => {
   };
 
   try {
-    // criando dados
     await Cliente.create(cliente);
 
     res
@@ -46,13 +68,10 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/:id", async (req, res) => {
-  // extrair o dado da requisição
-  const id = req.params.id;
-
+router.get("/:id/pets", async (req, res) => {
   try {
-    const cliente = await Cliente.findOne({ _id: id }).populate({
-      path: "pets",
+    const cliente = await Pet.find({ dono: req.params.id }).populate({
+      path: "dono",
       select: "nome",
     });
 
