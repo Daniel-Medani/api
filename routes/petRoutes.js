@@ -35,7 +35,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // Update - atualização de dados (PUT, PATCH)
-router.patch("/:id", async (req, res) => {
+router.patch("/:id/editar", async (req, res) => {
   const { nome, sexo, idade, raca } = req.body;
 
   const pet = {
