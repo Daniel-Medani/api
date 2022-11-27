@@ -68,6 +68,24 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.get("/:id", async (req, res) => {
+  try {
+    const cliente = await Cliente.findOne({ _id: req.params.id }).populate({
+      path: "pets",
+      select: "nome",
+    });
+
+    if (!cliente) {
+      res.status(422).json({ message: "O cliente não foi encontrado!" });
+      return;
+    }
+
+    res.status(200).json(cliente);
+  } catch (error) {
+    res.status(500).json({ error: error });
+  }
+});
+
 router.get("/:id/pets", async (req, res) => {
   try {
     const cliente = await Pet.find({ dono: req.params.id }).populate({
@@ -87,7 +105,7 @@ router.get("/:id/pets", async (req, res) => {
 });
 
 // Update - atualização de dados (PUT, PATCH)
-router.patch("/:id", async (req, res) => {
+router.patch("/:id/editar", async (req, res) => {
   const id = req.params.id;
 
   const { nome, cpf, endereco, telefone, pet } = req.body;
