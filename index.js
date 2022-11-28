@@ -24,18 +24,17 @@ app.use(express.json());
 
 const clienteRoutes = require("./routes/clienteRoutes");
 const petRoutes = require("./routes/petRoutes");
+const agendamentoRoutes = require("./routes/agendamentoRoutes");
 
 app.use("/clientes", clienteRoutes);
 app.use("/pets", petRoutes);
+app.use("/agendamentos", agendamentoRoutes);
 
 // rota inicial / endpoint
 app.get("/", (req, res) => {
-  // mostrar req
-
   res.json({ message: "Oi Express!" });
 });
 
-// entregar uma porta
 const DB_USER = process.env.DB_USER;
 const DB_PASSWORD = encodeURIComponent(process.env.DB_PASSWORD);
 
