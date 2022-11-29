@@ -7,9 +7,6 @@ const AgendamentoSchema = mongoose.Schema({
   data: {
     type: Date,
   },
-  hora: {
-    type: String,
-  },
   cliente: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Cliente",
