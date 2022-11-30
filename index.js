@@ -25,10 +25,12 @@ app.use(express.json());
 const clienteRoutes = require("./routes/clienteRoutes");
 const petRoutes = require("./routes/petRoutes");
 const agendamentoRoutes = require("./routes/agendamentoRoutes");
+const usuarioRoutes = require("./routes/usuarioRoutes");
 
 app.use("/clientes", clienteRoutes);
 app.use("/pets", petRoutes);
 app.use("/agendamentos", agendamentoRoutes);
+app.use("/usuarios", usuarioRoutes);
 
 // rota inicial / endpoint
 app.get("/", (req, res) => {
