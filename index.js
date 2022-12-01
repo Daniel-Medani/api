@@ -4,6 +4,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
 const cors = require("cors");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 // forma de ler JSON / middleware
 app.use(
@@ -26,11 +28,13 @@ const clienteRoutes = require("./routes/clienteRoutes");
 const petRoutes = require("./routes/petRoutes");
 const agendamentoRoutes = require("./routes/agendamentoRoutes");
 const usuarioRoutes = require("./routes/usuarioRoutes");
+const authRoutes = require("./routes/authRoutes");
 
 app.use("/clientes", clienteRoutes);
 app.use("/pets", petRoutes);
 app.use("/agendamentos", agendamentoRoutes);
 app.use("/usuarios", usuarioRoutes);
+app.use("/login", authRoutes);
 
 // rota inicial / endpoint
 app.get("/", (req, res) => {

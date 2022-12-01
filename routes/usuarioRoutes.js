@@ -1,25 +1,54 @@
 const router = require("express").Router();
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const Usuario = require("../models/Usuario");
 
-router.post("/", async (req, res) => {
-  const { nomeUsuario, senha, email, funcao } = req.body;
+router.post("/novo", async (req, res) => {
+  const { nomeUsuario, email, senha } = req.body;
 
-  const usuario = {
+  const usuExiste = await Usuario.findOne({ email: email });
+
+  // checar email
+  if (usuExiste) {
+    return res.status(422).json({ message: "Email em uso" });
+  }
+  // criar senha
+  const salt = await bcrypt.genSalt(12);
+  const passwordHash = await bcrypt.hash(senha, salt);
+
+  // criar usuário
+  const usu = new Usuario({
     nomeUsuario,
-    senha,
     email,
-    funcao,
-  };
-
+    senha: passwordHash,
+  });
   try {
-    await Usuario.create(usuario);
-    res
-      .status(201)
-      .json({ message: "Usuário inserida no sistema com sucesso!" });
-  } catch (error) {
-    res.status(500).json({ error: error });
+    await usu.save();
+
+    res.status(200).json({ msg: "Usuário criado com sucesso" });
+  } catch (err) {
+    res.status(500).json({ err: err });
   }
 });
+
+function checarToken(req, res, next) {
+  const authHeader = req.header["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+
+  if (!token) {
+    return res.status(401).json({ msg: "Acesso negado!" });
+  }
+
+  try {
+    const secret = process.env.SECRET;
+
+    jwt.verify(token, secret);
+
+    next();
+  } catch (error) {
+    res.status(400).json({ msg: "Token inválido" });
+  }
+}
 
 router.get("/", async (req, res) => {
   try {
@@ -32,15 +61,17 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/:id", async (req, res) => {
+  const id = req.params.id;
+
   try {
-    const usuario = await Usuario.findOne({ _id: req.params.id });
+    const usuario = await Usuario.findById(id, "-senha");
 
     if (!usuario) {
       res.status(422).json({ message: "Usuário não encontrado!" });
       return;
     }
 
-    res.status(200).json(usuario);
+    res.status(200).json({ usuario });
   } catch (error) {
     res.status(500).json({ error: error });
   }
