@@ -13,20 +13,21 @@ router.post("/novo", async (req, res) => {
     return res.status(422).json({ message: "Email em uso" });
   }
   // criar senha
-  const salt = await bcrypt.genSalt(12);
-  const passwordHash = await bcrypt.hash(senha, salt);
+  // const salt = await bcrypt.genSalt(12);
+  // const passwordHash = await bcrypt.hash(senha, salt);
 
   // criar usuário
   const usu = new Usuario({
     nomeUsuario,
     email,
-    senha: passwordHash,
+    senha,
   });
   try {
     await usu.save();
 
     res.status(200).json({ msg: "Usuário criado com sucesso" });
   } catch (err) {
+    console.log(err);
     res.status(500).json({ err: err });
   }
 });

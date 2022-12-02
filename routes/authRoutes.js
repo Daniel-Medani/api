@@ -22,7 +22,7 @@ router.post("/", async (req, res) => {
   }
 
   //   checar senha
-  const checarSenha = await bcrypt.compare(senha, usu.senha);
+  const checarSenha = senha === usu.senha;
 
   if (!checarSenha) {
     return res.status(404).json({ msg: "Senha inválida!" });

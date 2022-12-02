@@ -9,6 +9,7 @@ const UsuarioSchema = mongoose.Schema({
   },
   email: {
     type: String,
+    unique: true,
   },
   funcao: {
     type: String,
